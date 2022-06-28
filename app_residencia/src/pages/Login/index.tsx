@@ -1,14 +1,37 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity,Alert} from 'react-native';
 import {Text, Input, Icon, Button} from 'react-native-elements';
+import { LoginService } from '../../services/LoginService';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  const handleLogin = ({email, senha}) => {
+  const handleLogin = async (email:string, senha:string) => {
     console.log(`Email: ${email} - Senha: ${senha}`);
-    navigation.navigate('Home')
+
+    const respostaLogin = await LoginService (email, senha);
+    if(!respostaLogin){
+      Alert.alert(
+        "Erro",
+        "",
+        [
+          { text:  "Ok"},
+          { text: "Não foi possivel realizar o login."},
+        ]
+      );
+    }else{
+   navigation.navigate('Home',{
+    screen:'TabNavigationScreen',
+    params:{
+      screen:'Hometab',
+      params:{
+        token: respostaLogin.token,
+      }
+    }
+   })
+    }
+
   };
 
   return (
@@ -37,7 +60,7 @@ const Login = ({navigation}) => {
       <TouchableOpacity style={{ borderRadius: 50 , marginTop:30 }}>
       <Button
         title="Entrar"
-        onPress={() => handleLogin({email, senha})}
+        onPress={() => handleLogin(email, senha)}
         titleStyle={styles.titulobotao}
         buttonStyle={styles.botaostyle}
       /></TouchableOpacity>

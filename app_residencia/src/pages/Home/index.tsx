@@ -1,93 +1,103 @@
 import React from 'react';
 import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
 import {Card, Text} from 'react-native-elements';
+import {useEffect, useState} from 'react';
+import AxiosInstance from '../../api/AxiosInstance';
+import {Axios} from 'axios';
+import CardProduto from '../../components/cardProduto';
 
+type Categoriatype = {
+  idCategoria: number;
+  nomeCategoria: string;
+  nomeImagem: string;
+};
 
-const Home = () => {
+const Home = ({route, navigation}) => {
+  //console.log('Params:' + JSON.stringify(route));
+  //console.log('token: ' + token);
+  const {token} = route.params;
+  const [categoria, setCategoria] = useState<Categoriatype[]>([]);
+  const [produtos, setProdutos] = useState<any[]>([]);
+
+  useEffect(() => {
+    getDadosCategoria();
+    getProdutos();
+  }, []);
+
+  const getDadosCategoria = async () => {
+    AxiosInstance.get(`/categoria`, {
+      headers: {Authorization: `Bearer ${token}`},
+    })
+      .then(result => {
+        // console.log('Dados das categorias:' + JSON.stringify(result.data));
+        setCategoria(result.data);
+      })
+      .catch(error => {
+        console.log(
+          'Erro ao carregar a lista de categoria - ' + JSON.stringify(error),
+        );
+      });
+  };
+  const getProdutos = async () => {
+    AxiosInstance.get(`/produto`, {headers: {Authorization: `Bearer ${token}`}})
+      .then(result => {
+        // console.log('Dados dos produtos:' + JSON.stringify(result.data));
+        setProdutos(result.data);
+      })
+      .catch(error => {
+        console.log(
+          'Erro ao carregar a lista de produtos - ' + JSON.stringify(error),
+        );
+      });
+  };
 
   return (
     <ScrollView style={styles.container}>
-    <ScrollView style={styles.scroll_categorias} horizontal={true}>
-      <TouchableOpacity
-        onPress={() => console.log('Categoria 1 foi clicada')}
-        style={styles.botao_categoria}>
-        <View style={styles.view_itens_categoria}>
-          <Text style={styles.texto_nome_categoria}>{'Categorias 1'}</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log('Categoria 2 foi clicada')}
-        style={styles.botao_categoria}>
-        <View style={styles.view_itens_categoria}>
-          <Text style={styles.texto_nome_categoria}>{'Categorias 2'}</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log('Categoria 3 foi clicada')}
-        style={styles.botao_categoria}>
-        <View style={styles.view_itens_categoria}>
-          <Text style={styles.texto_nome_categoria}>{'Categorias 3'}</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log('Categoria 4 foi clicada')}
-        style={styles.botao_categoria}>
-        <View style={styles.view_itens_categoria}>
-          <Text style={styles.texto_nome_categoria}>{'Categorias 4'}</Text>
-        </View>
-      </TouchableOpacity>
-    </ScrollView>
-    <Text  style={styles.titulo_secao}>{'Recentes'}</Text>
-    <ScrollView horizontal={true}>
-      <Card containerStyle={styles.card_style} >
-        <Card.Image style={styles.imagens_cards} source={require('../../assets/img.strogonoff.jpg')} />
+      <ScrollView style={styles.scroll_categorias} horizontal={true}>
+        {categoria.map((categoria, indice) => (
+          <TouchableOpacity
+            key={indice}
+            onPress={() =>
+              console.log(`Categoria ${categoria.nomeCategoria} foi clicada`)
+            }
+            style={styles.botao_categoria}>
+            <View style={styles.view_itens_categoria}>
+              <Text style={styles.texto_nome_categoria}>
+                {categoria.nomeCategoria}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+      <Text style={styles.titulo_secao}>{'Recentes'}</Text>
+      <ScrollView horizontal={true}>
+        {produtos.map((produto, indice) => (
+          <TouchableOpacity key={indice}>
+            <CardProduto dados={produto} />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+      <Text style={styles.titulo_secao}>{'Destaque'}</Text>
+      <Card containerStyle={styles.card_grande}>
+        <Card.Image
+          style={styles.imagens_cards}
+          source={require('../../assets/picanha.jpg')}
+        />
         <Card.Divider />
-        <Card.Title style={styles.titulo_cards}>Strogonoff</Card.Title>
-        <Text style={styles.descricao_cards}>Strogonoff de Frango!</Text>
-      </Card>
-      <Card containerStyle={styles.card_style}>
-        <Card.Image style={styles.imagens_cards} source={require('../../assets/feijoada.jpg')} />
-        <Card.Divider />
-        <Card.Title style={styles.titulo_cards}>Feijoada</Card.Title>
-        <Text style={styles.descricao_cards}>Feijoada Completa!</Text>
-      </Card>
-      <Card containerStyle={styles.card_style}>
-        <Card.Image style={styles.imagens_cards} source={require('../../assets/lasanha.jpg')} />
-        <Card.Divider />
-        <Card.Title style={styles.titulo_cards}>Lasanha</Card.Title>
-        <Text style={styles.descricao_cards}>Lasanha a bolonhesa!</Text>
-      </Card>
-      <Card containerStyle={styles.card_style}>
-        <Card.Image style={styles.imagens_cards} source={require('../../assets/espaguete.jpg')} />
-        <Card.Divider />
-        <Card.Title style={styles.titulo_cards}>Espaguete</Card.Title>
-        <Text style={styles.descricao_cards}>Espaguete ao Molho de tomate!</Text>
-      </Card>
-      <Card containerStyle={styles.card_style}>
-        <Card.Image style={styles.imagens_cards} source={require('../../assets/parmegiana.jpg')} />
-        <Card.Divider />
-        <Card.Title style={styles.titulo_cards}>Parmegiana</Card.Title>
-        <Text style={styles.descricao_cards}>Pargeniana de frango!</Text>
+        <Card.Title style={styles.titulo_card}>Picanha</Card.Title>
+        <Text style={styles.descricao_card}>Carne de churrasco!</Text>
       </Card>
     </ScrollView>
-    <Text  style={styles.titulo_secao}>{'Destaque'}</Text>
-    <Card containerStyle={styles.card_grande}>
-      <Card.Image style={styles.imagens_cards} source={require('../../assets/picanha.jpg')} />
-      <Card.Divider />
-      <Card.Title style={styles.titulo_card}>Picanha</Card.Title>
-      <Text style={styles.descricao_card}>Carne de churrasco!</Text>
-    </Card>
-  </ScrollView>
-);
+  );
 };
-  
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0d0d0e',
     padding: 16,
   },
-    scroll_categorias: {
+  scroll_categorias: {
     flexGrow: 0,
   },
   view_itens_categoria: {
@@ -96,30 +106,30 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     justifyContent: 'center',
   },
-  titulo_secao:{
-    marginLeft:15,
-    fontSize:25,
-    color:'pink',
+  titulo_secao: {
+    marginLeft: 15,
+    fontSize: 25,
+    color: 'pink',
   },
-  card_style:{
+  card_style: {
     backgroundColor: 'pink',
-    padding:0,
-    marginBottom:20,
-    width:125,
+    padding: 0,
+    marginBottom: 20,
+    width: 125,
     borderRadius: 5,
-    borderWidth:0,
+    borderWidth: 0,
   },
-  card_grande:{
+  card_grande: {
     backgroundColor: 'pink',
-    padding:0,
-    marginBottom:20,
+    padding: 0,
+    marginBottom: 20,
     borderRadius: 5,
-    borderWidth:0,
+    borderWidth: 0,
   },
-  imagens_cards:{
+  imagens_cards: {
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
-    borderWidth:0,
+    borderWidth: 0,
   },
   botao_categoria: {
     alignItems: 'center',
@@ -128,27 +138,27 @@ const styles = StyleSheet.create({
   texto_nome_categoria: {
     color: 'pink',
     textAlign: 'center',
-    fontSize: 17.5
+    fontSize: 17.5,
   },
-  titulo_cards:{
+  titulo_cards: {
     fontSize: 18,
-    color:'black',
+    color: 'black',
   },
-  titulo_card:{
+  titulo_card: {
     fontSize: 25,
-    color:'black',
+    color: 'black',
   },
-  descricao_cards:{
-    marginBottom:10,
-    fontSize:16,
+  descricao_cards: {
+    marginBottom: 10,
+    fontSize: 16,
     textAlign: 'center',
-    color:'#181717',
+    color: '#181717',
   },
-  descricao_card:{
-    textAlign:'center',
+  descricao_card: {
+    textAlign: 'center',
     fontSize: 20,
-    color:'#181717',
-    marginBottom:15,
+    color: '#181717',
+    marginBottom: 15,
   },
 });
 
