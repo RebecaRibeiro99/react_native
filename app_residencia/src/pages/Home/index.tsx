@@ -1,9 +1,8 @@
 import React, {useContext} from 'react';
-import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, ScrollView, View, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
 import {Card, Text} from 'react-native-elements';
 import {useEffect, useState} from 'react';
 import AxiosInstance from '../../api/AxiosInstance';
-import {Axios} from 'axios';
 import CardProduto from '../../components/cardProduto';
 import {AutenticacaoContext} from '../../context/AutenticacaoContext';
 import Loader from '../../components/Loader';
@@ -22,6 +21,7 @@ const Home = ({navigation}) => {
   const [categoria, setCategoria] = useState<Categoriatype[]>([]);
   const [produtos, setProdutos] = useState<any[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     getDadosCategoria();
@@ -29,12 +29,14 @@ const Home = ({navigation}) => {
   }, []);
 
   const getDadosCategoria = async () => {
+    setLoading(true);
     AxiosInstance.get(`/categoria`, {
       headers: {Authorization: `Bearer ${usuario.token}`},
     })
       .then(result => {
         // console.log('Dados das categorias:' + JSON.stringify(result.data));
         setCategoria(result.data);
+        setLoading(false);
       })
       .catch(error => {
         console.log(
@@ -42,6 +44,13 @@ const Home = ({navigation}) => {
         );
       });
   };
+  function ListCategoria({ categoria }){
+    return (
+            <View style={styles.view_itens_categoria}>
+              <Text style={styles.texto_nome_categoria}>{categoria.nomeCategoria}</Text>
+            </View>
+    )
+  }
   const getProdutos = async () => {
     AxiosInstance.get(`/produto`, {
       headers: {Authorization: `Bearer ${usuario.token}`},
@@ -73,7 +82,16 @@ const Home = ({navigation}) => {
       )}
       {!carregando && (
         <View>
-          <ScrollView style={styles.scroll_categorias} horizontal={true}>
+          <FlatList 
+        data={categoria}
+        keyExtractor={(item, index) => String(item.idCategoria)}
+        renderItem={({ item }) => <ListCategoria  categoria={item} />}
+        horizontal={true}
+        onEndReached={getDadosCategoria}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={ <FooterList load={loading}/>}
+        />
+          {/* <ScrollView style={styles.scroll_categorias} horizontal={true}>
             {categoria.map((categoria, indice) => (
               <TouchableOpacity
                 key={indice}
@@ -90,7 +108,7 @@ const Home = ({navigation}) => {
                 </View>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </ScrollView> */}
           <Text style={styles.titulo_secao}>{'Recentes'}</Text>
           <ScrollView horizontal={true}>
             {produtos.map((produto, indice) => (
@@ -114,8 +132,22 @@ const Home = ({navigation}) => {
     </ScrollView>
   );
 };
+function FooterList({load}) {
+  if (!load) return null;
+  return(
+    <View style={styles.loading}>
+      <ActivityIndicator size={25} color='pink' />
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
+  loading:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: '#0d0d0e',
@@ -129,6 +161,7 @@ const styles = StyleSheet.create({
     height: 100,
     backgroundColor: 'black',
     justifyContent: 'center',
+    marginRight:20
   },
   titulo_secao: {
     marginLeft: 15,

@@ -95,6 +95,7 @@ const Routes = () => {
           options={{
             title: 'Login',
             headerTitleAlign: 'center',
+            headerShown:false,
             headerStyle: {
               backgroundColor: 'pink',
             },
@@ -107,8 +108,10 @@ const Routes = () => {
           options={{
             title: 'Home',
             headerTitleAlign: 'center',
+            headerShown:false,
             headerStyle: {
               backgroundColor: 'pink',
+              
             },
             headerTintColor: 'black',
           }}

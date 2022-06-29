@@ -2,18 +2,27 @@ import React from 'react';
 import {Card, Text} from 'react-native-elements';
 import {StyleSheet} from 'react-native';
 
-const CardProduto = (props: any) => {
+ type ProdutoType={
+  idProduto: number;
+  sku:string;
+  nomeProduto: string;
+  imagemProduto: string;
+  precoProduto: number;
+  descricaoProduto: string;
+  };
+
+const CardProduto = (props:ProdutoType) => {
   const dadosDoProduto = props.dados;
   console.log(dadosDoProduto)
   return (
     <Card containerStyle={styles.card_style}>
       <Card.Image
         style={styles.imagens_cards}
-        source={require('../assets/img.strogonoff.jpg')}
+        source={{uri:dadosDoProduto.imagemProduto}}
       />
       <Card.Divider />
       <Card.Title style={styles.titulo_cards}>{dadosDoProduto.nomeProduto}</Card.Title>
-      <Text style={styles.descricao_cards}>Strogonoff de Frango!</Text>
+      <Text style={styles.descricao_cards}>{dadosDoProduto.descricaoProduto}</Text>
     </Card>
   );
 };
