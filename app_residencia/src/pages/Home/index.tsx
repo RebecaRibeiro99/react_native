@@ -29,14 +29,14 @@ const Home = ({navigation}) => {
   }, []);
 
   const getDadosCategoria = async () => {
-    setLoading(true);
+    // setLoading(true);
     AxiosInstance.get(`/categoria`, {
       headers: {Authorization: `Bearer ${usuario.token}`},
     })
       .then(result => {
         // console.log('Dados das categorias:' + JSON.stringify(result.data));
         setCategoria(result.data);
-        setLoading(false);
+        // setLoading(false);
       })
       .catch(error => {
         console.log(
@@ -52,12 +52,14 @@ const Home = ({navigation}) => {
     )
   }
   const getProdutos = async () => {
+    // setLoading(true);
     AxiosInstance.get(`/produto`, {
       headers: {Authorization: `Bearer ${usuario.token}`},
     })
       .then(result => {
         // console.log('Dados dos produtos:' + JSON.stringify(result.data));
         setProdutos(result.data);
+        // setLoading(false);
       })
       .catch(error => {
         console.log(
@@ -65,7 +67,11 @@ const Home = ({navigation}) => {
         );
       });
   };
-
+  function ListProduto({ produtos }){
+    return (
+            <CardProduto dados={produtos}/>
+    )
+  }
   setTimeout(() => {
     if (produtos && categoria) {
       setCarregando(false);
@@ -87,9 +93,9 @@ const Home = ({navigation}) => {
         keyExtractor={(item, index) => String(item.idCategoria)}
         renderItem={({ item }) => <ListCategoria  categoria={item} />}
         horizontal={true}
-        onEndReached={getDadosCategoria}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={ <FooterList load={loading}/>}
+        // onEndReached={getDadosCategoria}
+        // onEndReachedThreshold={0.1}
+        // ListFooterComponent={ <FooterList load={loading}/>}
         />
           {/* <ScrollView style={styles.scroll_categorias} horizontal={true}>
             {categoria.map((categoria, indice) => (
@@ -110,13 +116,23 @@ const Home = ({navigation}) => {
             ))}
           </ScrollView> */}
           <Text style={styles.titulo_secao}>{'Recentes'}</Text>
-          <ScrollView horizontal={true}>
+        
+          <FlatList 
+        data={produtos}
+        keyExtractor={(item, index) => String(item.idProduto)}
+        renderItem={({ item }) => <ListProduto  produtos={item} />}
+        horizontal={true}
+        // onEndReached={getDadosCategoria}
+        // onEndReachedThreshold={0.1}
+        // ListFooterComponent={ <FooterList load={loading}/>}
+        />
+          {/* <ScrollView horizontal={true}>
             {produtos.map((produto, indice) => (
               <TouchableOpacity key={indice}>
                 <CardProduto dados={produto} />
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </ScrollView> */}
           <Text style={styles.titulo_secao}>{'Destaque'}</Text>
           <Card containerStyle={styles.card_grande}>
             <Card.Image
