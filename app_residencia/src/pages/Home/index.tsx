@@ -6,12 +6,10 @@ import AxiosInstance from '../../api/AxiosInstance';
 import CardProduto from '../../components/cardProduto';
 import {AutenticacaoContext} from '../../context/AutenticacaoContext';
 import Loader from '../../components/Loader';
+import BarraPesquisa from '../../components/BarraPesquisa';
+import { Categoriatype } from '../../models/CategogiaType';
 
-type Categoriatype = {
-  idCategoria: number;
-  nomeCategoria: string;
-  nomeImagem: string;
-};
+
 
 const Home = ({navigation}) => {
   //console.log('Params:' + JSON.stringify(route));
@@ -79,7 +77,9 @@ const Home = ({navigation}) => {
   }, 2000);
 
   return (
+
     <ScrollView style={styles.container}>
+      <BarraPesquisa/>
       {carregando && (
         <View style={styles.containerLoader}>
           <Loader cor="pink"/>
