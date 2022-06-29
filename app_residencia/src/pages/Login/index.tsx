@@ -1,37 +1,30 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity,Alert} from 'react-native';
+import React, {useState, useContext} from 'react';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Text, Input, Icon, Button} from 'react-native-elements';
-import { LoginService } from '../../services/LoginService';
+import {AutenticacaoContext} from '../../context/AutenticacaoContext';
+import Loader from '../../components/Loader';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const {login} = useContext(AutenticacaoContext);
+  const [carregando, setCarregando] = useState(false);
 
-  const handleLogin = async (email:string, senha:string) => {
+  const handleLogin = async (email: string, senha: string) => {
     console.log(`Email: ${email} - Senha: ${senha}`);
+    setCarregando(true);
 
-    const respostaLogin = await LoginService (email, senha);
-    if(!respostaLogin){
-      Alert.alert(
-        "Erro",
-        "",
-        [
-          { text:  "Ok"},
-          { text: "Não foi possivel realizar o login."},
-        ]
-      );
-    }else{
-   navigation.navigate('Home',{
-    screen:'TabNavigationScreen',
-    params:{
-      screen:'Hometab',
-      params:{
-        token: respostaLogin.token,
-      }
+    const respostaLogin = await login(email, senha);
+    if (!respostaLogin) {
+      setCarregando(false);
+      Alert.alert('Erro', '', [
+        {text: 'Ok'},
+        {text: 'Não foi possivel realizar o login.'},
+      ]);
+    } else {
+      setCarregando(false);
+      navigation.navigate('Home');
     }
-   })
-    }
-
   };
 
   return (
@@ -56,14 +49,23 @@ const Login = ({navigation}) => {
         }
         inputStyle={styles.inputs}
         placeholderTextColor={'pink'}
+        secureTextEntry
       />
-      <TouchableOpacity style={{ borderRadius: 50 , marginTop:30 }}>
-      <Button
-        title="Entrar"
-        onPress={() => handleLogin(email, senha)}
-        titleStyle={styles.titulobotao}
-        buttonStyle={styles.botaostyle}
-      /></TouchableOpacity>
+      <TouchableOpacity
+        style={{position: 'relative', borderRadius: 50, marginTop: 30}}>
+        <Button
+          title="Entrar"
+          onPress={() => handleLogin(email, senha)}
+          titleStyle={styles.titulobotao}
+          buttonStyle={styles.botaostyle}
+          disabled={carregando}
+        />
+        {carregando && (
+          <View style={styles.containerLoader}>
+            <Loader cor="black"/>
+          </View>
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
@@ -88,12 +90,15 @@ const styles = StyleSheet.create({
   titulobotao: {
     color: '#0d0d0e',
     margin: 5,
-    fontSize:25
+    fontSize: 25,
   },
   botaostyle: {
     backgroundColor: 'pink',
     borderRadius: 50,
   },
+  containerLoader:{
+    translateY: -50
+  }
 });
 
 export default Login;

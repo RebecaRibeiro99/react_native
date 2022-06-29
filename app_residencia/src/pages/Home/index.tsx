@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
 import {Card, Text} from 'react-native-elements';
 import {useEffect, useState} from 'react';
 import AxiosInstance from '../../api/AxiosInstance';
 import {Axios} from 'axios';
 import CardProduto from '../../components/cardProduto';
+import {AutenticacaoContext} from '../../context/AutenticacaoContext';
+import Loader from '../../components/Loader';
 
 type Categoriatype = {
   idCategoria: number;
@@ -12,12 +14,14 @@ type Categoriatype = {
   nomeImagem: string;
 };
 
-const Home = ({route, navigation}) => {
+const Home = ({navigation}) => {
   //console.log('Params:' + JSON.stringify(route));
   //console.log('token: ' + token);
-  const {token} = route.params;
+  const {usuario} = useContext(AutenticacaoContext);
+  console.log('Usuario: ' + JSON.stringify(usuario));
   const [categoria, setCategoria] = useState<Categoriatype[]>([]);
   const [produtos, setProdutos] = useState<any[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     getDadosCategoria();
@@ -26,7 +30,7 @@ const Home = ({route, navigation}) => {
 
   const getDadosCategoria = async () => {
     AxiosInstance.get(`/categoria`, {
-      headers: {Authorization: `Bearer ${token}`},
+      headers: {Authorization: `Bearer ${usuario.token}`},
     })
       .then(result => {
         // console.log('Dados das categorias:' + JSON.stringify(result.data));
@@ -39,7 +43,9 @@ const Home = ({route, navigation}) => {
       });
   };
   const getProdutos = async () => {
-    AxiosInstance.get(`/produto`, {headers: {Authorization: `Bearer ${token}`}})
+    AxiosInstance.get(`/produto`, {
+      headers: {Authorization: `Bearer ${usuario.token}`},
+    })
       .then(result => {
         // console.log('Dados dos produtos:' + JSON.stringify(result.data));
         setProdutos(result.data);
@@ -51,42 +57,60 @@ const Home = ({route, navigation}) => {
       });
   };
 
+  setTimeout(() => {
+    if (produtos && categoria) {
+      setCarregando(false);
+    }
+  }, 2000);
+
   return (
     <ScrollView style={styles.container}>
-      <ScrollView style={styles.scroll_categorias} horizontal={true}>
-        {categoria.map((categoria, indice) => (
-          <TouchableOpacity
-            key={indice}
-            onPress={() =>
-              console.log(`Categoria ${categoria.nomeCategoria} foi clicada`)
-            }
-            style={styles.botao_categoria}>
-            <View style={styles.view_itens_categoria}>
-              <Text style={styles.texto_nome_categoria}>
-                {categoria.nomeCategoria}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-      <Text style={styles.titulo_secao}>{'Recentes'}</Text>
-      <ScrollView horizontal={true}>
-        {produtos.map((produto, indice) => (
-          <TouchableOpacity key={indice}>
-            <CardProduto dados={produto} />
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-      <Text style={styles.titulo_secao}>{'Destaque'}</Text>
-      <Card containerStyle={styles.card_grande}>
-        <Card.Image
-          style={styles.imagens_cards}
-          source={require('../../assets/picanha.jpg')}
-        />
-        <Card.Divider />
-        <Card.Title style={styles.titulo_card}>Picanha</Card.Title>
-        <Text style={styles.descricao_card}>Carne de churrasco!</Text>
-      </Card>
+      {carregando && (
+        <View style={styles.containerLoader}>
+          <Loader cor="pink"/>
+          <Text style={styles.nomeLoader}>Carregando</Text>
+        </View>
+      )}
+      {!carregando && (
+        <View>
+          <ScrollView style={styles.scroll_categorias} horizontal={true}>
+            {categoria.map((categoria, indice) => (
+              <TouchableOpacity
+                key={indice}
+                onPress={() =>
+                  console.log(
+                    `Categoria ${categoria.nomeCategoria} foi clicada`,
+                  )
+                }
+                style={styles.botao_categoria}>
+                <View style={styles.view_itens_categoria}>
+                  <Text style={styles.texto_nome_categoria}>
+                    {categoria.nomeCategoria}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <Text style={styles.titulo_secao}>{'Recentes'}</Text>
+          <ScrollView horizontal={true}>
+            {produtos.map((produto, indice) => (
+              <TouchableOpacity key={indice}>
+                <CardProduto dados={produto} />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <Text style={styles.titulo_secao}>{'Destaque'}</Text>
+          <Card containerStyle={styles.card_grande}>
+            <Card.Image
+              style={styles.imagens_cards}
+              source={require('../../assets/picanha.jpg')}
+            />
+            <Card.Divider />
+            <Card.Title style={styles.titulo_card}>Picanha</Card.Title>
+            <Text style={styles.descricao_card}>Carne de churrasco!</Text>
+          </Card>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -160,6 +184,19 @@ const styles = StyleSheet.create({
     color: '#181717',
     marginBottom: 15,
   },
+  nomeLoader: {
+    marginTop: 20,
+    fontSize: 25,
+    color: 'pink',
+    textAlign:'center'
+  },
+  containerLoader:{
+    position: 'relative',
+    flex: 1,
+    alignContent:'center',
+    justifyContent:'center',
+    marginTop: '50%'
+  }
 });
 
 export default Home;
