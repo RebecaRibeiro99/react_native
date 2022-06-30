@@ -50,11 +50,13 @@ const Home = ({navigation}) => {
   };
   function ListCategoria({categoria}) {
     return (
-      <View style={styles.view_itens_categoria}>
-        <Text style={styles.texto_nome_categoria}>
-          {categoria.nomeCategoria}
-        </Text>
-      </View>
+         <Card containerStyle={styles.card_style}>
+      <Card.Image
+        style={styles.imagens_cards}
+        source={{uri:categoria.nomeImagem}}
+      />
+      <Card.Title style={styles.texto_nome_categoria}>{categoria.nomeCategoria}</Card.Title>
+    </Card>
     );
   }
   const getProdutos = async () => {
@@ -93,7 +95,8 @@ const Home = ({navigation}) => {
       )}
       {!carregando && (
         <View>
-          <FlatList
+          <Text style={styles.titulo_secao}>{'Categorias'}</Text>
+          <FlatList 
             data={categoria}
             keyExtractor={(item, index) => String(item.idCategoria)}
             renderItem={({item}) => <ListCategoria categoria={item} />}
@@ -120,7 +123,7 @@ const Home = ({navigation}) => {
               </TouchableOpacity>
             ))}
           </ScrollView> */}
-          <Text style={styles.titulo_secao}>{'Recentes'}</Text>
+          <Text style={styles.titulo_secao}>{'Cardápio'}</Text>
 
           <FlatList
             data={produtos}
@@ -138,7 +141,7 @@ const Home = ({navigation}) => {
               </TouchableOpacity>
             ))}
           </ScrollView> */}
-          <Text style={styles.titulo_secao}>{'Destaque'}</Text>
+          <Text style={styles.titulo_secao}>{'Mais vendido'}</Text>
           <Card containerStyle={styles.card_grande}>
             <Card.Image
               style={styles.imagens_cards}
@@ -177,12 +180,15 @@ const styles = StyleSheet.create({
   scroll_categorias: {
     flexGrow: 0,
   },
+
   view_itens_categoria: {
     width: 100,
     height: 100,
-    backgroundColor: 'black',
+    backgroundColor: 'pink',
     justifyContent: 'center',
     marginRight: 20,
+    marginLeft: 15,
+    marginTop:30
   },
   titulo_secao: {
     marginLeft: 15,
@@ -197,6 +203,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 0,
   },
+  imagens_cards: {
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderWidth: 0,
+  },
+
+  titulo_cards: {
+    fontSize: 18,
+    color: 'black',
+  },
   card_grande: {
     backgroundColor: 'pink',
     padding: 0,
@@ -204,23 +220,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 0,
   },
-  imagens_cards: {
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderWidth: 0,
-  },
   botao_categoria: {
     alignItems: 'center',
     padding: 10,
   },
   texto_nome_categoria: {
-    color: 'pink',
+    color: 'black',
     textAlign: 'center',
     fontSize: 17.5,
-  },
-  titulo_cards: {
-    fontSize: 18,
-    color: 'black',
+    padding: 5,
   },
   titulo_card: {
     fontSize: 25,

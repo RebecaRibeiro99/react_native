@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {StatusBar, View, TextInput} from 'react-native';
-import {Text} from 'react-native-elements';
+import {StatusBar, View, TextInput, StyleSheet} from 'react-native';
+import {Icon, Input, Text} from 'react-native-elements';
 import {ScrollView} from 'react-native-gesture-handler';
 import AxiosInstance from '../api/AxiosInstance';
 import {AutenticacaoContext} from '../context/AutenticacaoContext';
@@ -16,7 +16,9 @@ export default function BarraPesquisa(props) {
   const selecionaPesquisa = (categoria: any) => {
     pesquisar.Buscar(categoria);
     props.navigation.navigate('ProdutoCategoria');
+    setPesquisa("")
     console.log('Categoria clicaca', pesquisar.pesquisa);
+
   };
   useEffect(() => {
     getDadosCategoria();
@@ -38,15 +40,24 @@ export default function BarraPesquisa(props) {
   };
 
   return (
-    <View style={{flex: 1, alignItems: 'center', marginTop: 20}}>
-      <StatusBar barStyle="light-content" />
-      <TextInput placeholder="Pesquisar..." onChangeText={setPesquisa} />
-
-      <ScrollView>
+    <View style={{flex: 1, paddingLeft: 15, marginTop: 20}}>
+      <View style={styles.containerPesquisa}>
+        <Input
+          placeholder="Pesquisar"
+          value={pesquisa}
+          onChangeText={setPesquisa}
+          rightIcon={
+            <Icon name="search" color="black" type="font-awesome" size={26} />
+          }
+          inputContainerStyle={styles.inputs}
+          placeholderTextColor={'black'}
+        />
+      </View>
+      <ScrollView style={styles.resultadoContainer}>
         {categoria
           .filter(val => {
-            if (pesquisa === '') {
-              return val;
+            if (pesquisa.length <= 1) {
+              return;
             } else if (
               val.nomeCategoria.toLowerCase().includes(pesquisa.toLowerCase())
             ) {
@@ -54,7 +65,10 @@ export default function BarraPesquisa(props) {
             }
           })
           .map((categoria, indice) => (
-            <Text onPress={e => selecionaPesquisa(categoria)} key={indice}>
+            <Text
+              style={styles.pesquisaResultado}
+              onPress={e => selecionaPesquisa(categoria)}
+              key={indice}>
               {categoria.nomeCategoria}
             </Text>
           ))}
@@ -62,3 +76,45 @@ export default function BarraPesquisa(props) {
     </View>
   );
 }
+const styles = StyleSheet.create({
+  containerPesquisa: {
+    width: '100%',
+    backgroundColor: 'pink',
+    borderRadius: 15,
+    height: 60,
+    flex: 1,
+    alignItems:'center',
+    justifyContent:'center',
+    marginBottom:15,
+  },
+  inputs: {
+    color: 'black',
+    borderBottomColor: 'pink',
+    padding: 5,
+    marginTop:30,
+    flex: 1,
+  },
+  resultadoContainer: {
+    width: '100%',
+    marginTop: 5,
+    position:'absolute',
+    zIndex:1,
+    top:60,
+    left: 15,
+    backgroundColor: 'pink',
+    borderRadius: 10,
+  },
+  pesquisaResultado: {
+    backgroundColor: 'pink',
+    padding: 10,
+    paddingLeft:15,
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    borderBottomColor: 'black',
+    fontWeight:'bold',
+    borderBottomWidth: 1,
+    width: '100%',
+    borderRadius: 10,
+    marginTop:2,
+  },
+});

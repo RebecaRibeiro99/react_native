@@ -15,7 +15,7 @@ const BottomTabNavigator = () => {
   return (
     <TabNavigation.Navigator
       screenOptions={({route}) => ({
-        tabBarIcon: ({color, size}) => {
+        tabBarIcon: ({color,focused, size}) => {
           let iconName;
 
           switch (route.name) {
@@ -36,20 +36,25 @@ const BottomTabNavigator = () => {
               break;
           }
 
-          return <Icon name={iconName} size={35} color={color} />;
+          return <Icon name={iconName ? iconName: ''} size={30} color={color} />;
         },
         headerShown: false,
         // tabBarLabelStyle:{
         //   fontSize: 18
         // }
         tabBarShowLabel: false,
+        tabBarActiveBackgroundColor: 'pink',
+        tabBarInactiveBackgroundColor: 'pink',
+        tabBarActiveTintColor: 'black',
+        tabBarInactiveTintColor: 'black',
       })}
-      tabBarOptions={{
-        activeTintColor: 'black',
-        inactiveTintColor: 'black',
-        inactiveBackgroundColor: 'pink',
-        activeBackgroundColor: 'pink',
-      }}>
+      // tabBarOptions={{
+      //   activeTintColor: 'black',
+      //   inactiveTintColor: 'black',
+      //   inactiveBackgroundColor: 'pink',
+      //   activeBackgroundColor: 'pink',
+      // }}
+    >
       <TabNavigation.Screen name="Hometab" component={Home} />
       <TabNavigation.Screen name="Pesquisa" component={Categories} />
       <TabNavigation.Screen name="Favoritos" component={Categories} />
@@ -121,7 +126,7 @@ const Routes = () => {
           name="ProdutoCategoria"
           component={ProdutoCategoria}
           options={{
-            title: 'Produto Categoria',
+            title: 'Produtos por categoria',
             headerTitleAlign: 'center',
             headerShown: true,
             headerStyle: {

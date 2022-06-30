@@ -13,6 +13,7 @@ const ProdutoCategoria = () => {
   const [produtos, setProdutos] = useState<ProdutoType[]>([]);
   const [carregando, setCarregando] = useState(true);
   const pesquisar = usePesquisar();
+  const [vazio, setVazio] = useState(false);
 
   useEffect(() => {
     getProdutos();
@@ -29,6 +30,9 @@ const ProdutoCategoria = () => {
           if (produto.nomeCategoria === pesquisar.pesquisa.nomeCategoria) {
             ListaTemporaria.push(produto);
             setProdutos(ListaTemporaria);
+            setVazio(false);
+          }else{
+            setVazio(true);
           }
         });
       })
@@ -54,9 +58,9 @@ const ProdutoCategoria = () => {
           <Text style={styles.nomeLoader}>Carregando</Text>
         </View>
       )}
-      {!carregando && (
+      {!carregando && !vazio && (
         <View>
-          <Text style={styles.titulo_secao}>{'PRODUTO X CATEGORIA'}</Text>
+          <Text style={styles.titulo_secao}>{pesquisar.pesquisa.nomeCategoria}</Text>
 
           <FlatList
             data={produtos}
@@ -66,6 +70,12 @@ const ProdutoCategoria = () => {
           />
         </View>
       )}
+      {
+        !carregando && vazio && (
+          <Text style={styles.titulo_secao}>Categoria sem nenhum produto relacionado.</Text>
+
+        )
+      }
     </View>
   );
 };
@@ -82,6 +92,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 25,
     color: 'pink',
+    marginBottom:20
   },
   nomeLoader: {
     marginTop: 20,
@@ -94,7 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignContent: 'center',
     justifyContent: 'center',
-    marginTop: '50%',
+    marginTop: '30%',
   },
 });
 
