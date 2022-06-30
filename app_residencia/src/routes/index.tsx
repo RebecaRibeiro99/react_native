@@ -7,8 +7,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
 import Categories from '../pages/Categories';
+import ProdutoCategoria from '../pages/Categories/ProdutoCategoria';
 
 const TabNavigation = createBottomTabNavigator();
+
 const BottomTabNavigator = () => {
   return (
     <TabNavigation.Navigator
@@ -95,7 +97,7 @@ const Routes = () => {
           options={{
             title: 'Login',
             headerTitleAlign: 'center',
-            headerShown:false,
+            headerShown: false,
             headerStyle: {
               backgroundColor: 'pink',
             },
@@ -108,10 +110,22 @@ const Routes = () => {
           options={{
             title: 'Home',
             headerTitleAlign: 'center',
-            headerShown:false,
+            headerShown: false,
             headerStyle: {
               backgroundColor: 'pink',
-              
+            },
+            headerTintColor: 'black',
+          }}
+        />
+        <StackNavigation.Screen
+          name="ProdutoCategoria"
+          component={ProdutoCategoria}
+          options={{
+            title: 'Produto Categoria',
+            headerTitleAlign: 'center',
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: 'pink',
             },
             headerTintColor: 'black',
           }}

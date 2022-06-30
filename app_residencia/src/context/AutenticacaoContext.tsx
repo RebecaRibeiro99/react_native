@@ -24,6 +24,7 @@ export const AutenticacaoProvider = ({children}) =>{
     return(
         <AutenticacaoContext.Provider value={{
             login,
+            setUsuario,
             usuario
         }}>
             {children}

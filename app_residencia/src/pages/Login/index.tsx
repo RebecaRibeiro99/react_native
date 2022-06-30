@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Alert, Keyboard} from 'react-native';
 import {Text, Input, Icon, Button} from 'react-native-elements';
 import {AutenticacaoContext} from '../../context/AutenticacaoContext';
 import Loader from '../../components/Loader';
@@ -13,6 +13,7 @@ const Login = ({navigation}) => {
   const handleLogin = async (email: string, senha: string) => {
     console.log(`Email: ${email} - Senha: ${senha}`);
     setCarregando(true);
+    Keyboard.dismiss();
 
     const respostaLogin = await login(email, senha);
     if (!respostaLogin) {

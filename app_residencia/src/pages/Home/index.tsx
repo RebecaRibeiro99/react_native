@@ -1,5 +1,12 @@
 import React, {useContext} from 'react';
-import {StyleSheet, ScrollView, View, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import {Card, Text} from 'react-native-elements';
 import {useEffect, useState} from 'react';
 import AxiosInstance from '../../api/AxiosInstance';
@@ -7,9 +14,8 @@ import CardProduto from '../../components/cardProduto';
 import {AutenticacaoContext} from '../../context/AutenticacaoContext';
 import Loader from '../../components/Loader';
 import BarraPesquisa from '../../components/BarraPesquisa';
-import { Categoriatype } from '../../models/CategogiaType';
-
-
+import {Categoriatype} from '../../models/CategoriaType';
+import { ProdutoType } from '../../models/ProdutoType';
 
 const Home = ({navigation}) => {
   //console.log('Params:' + JSON.stringify(route));
@@ -17,9 +23,9 @@ const Home = ({navigation}) => {
   const {usuario} = useContext(AutenticacaoContext);
   console.log('Usuario: ' + JSON.stringify(usuario));
   const [categoria, setCategoria] = useState<Categoriatype[]>([]);
-  const [produtos, setProdutos] = useState<any[]>([]);
+  const [produtos, setProdutos] = useState<ProdutoType[]>([]);
   const [carregando, setCarregando] = useState(true);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getDadosCategoria();
@@ -32,7 +38,7 @@ const Home = ({navigation}) => {
       headers: {Authorization: `Bearer ${usuario.token}`},
     })
       .then(result => {
-        // console.log('Dados das categorias:' + JSON.stringify(result.data));
+        //  console.log('Dados das categorias:' + JSON.stringify(result.data));
         setCategoria(result.data);
         // setLoading(false);
       })
@@ -42,12 +48,14 @@ const Home = ({navigation}) => {
         );
       });
   };
-  function ListCategoria({ categoria }){
+  function ListCategoria({categoria}) {
     return (
-            <View style={styles.view_itens_categoria}>
-              <Text style={styles.texto_nome_categoria}>{categoria.nomeCategoria}</Text>
-            </View>
-    )
+      <View style={styles.view_itens_categoria}>
+        <Text style={styles.texto_nome_categoria}>
+          {categoria.nomeCategoria}
+        </Text>
+      </View>
+    );
   }
   const getProdutos = async () => {
     // setLoading(true);
@@ -55,7 +63,7 @@ const Home = ({navigation}) => {
       headers: {Authorization: `Bearer ${usuario.token}`},
     })
       .then(result => {
-        // console.log('Dados dos produtos:' + JSON.stringify(result.data));
+        console.log('Dados dos produtos:' + JSON.stringify(result.data));
         setProdutos(result.data);
         // setLoading(false);
       })
@@ -65,10 +73,8 @@ const Home = ({navigation}) => {
         );
       });
   };
-  function ListProduto({ produtos }){
-    return (
-            <CardProduto dados={produtos}/>
-    )
+  function ListProduto({produtos}) {
+    return <CardProduto dados={produtos} />;
   }
   setTimeout(() => {
     if (produtos && categoria) {
@@ -77,26 +83,25 @@ const Home = ({navigation}) => {
   }, 2000);
 
   return (
-
     <ScrollView style={styles.container}>
-      <BarraPesquisa/>
+      <BarraPesquisa navigation={navigation}/>
       {carregando && (
         <View style={styles.containerLoader}>
-          <Loader cor="pink"/>
+          <Loader cor="pink" />
           <Text style={styles.nomeLoader}>Carregando</Text>
         </View>
       )}
       {!carregando && (
         <View>
-          <FlatList 
-        data={categoria}
-        keyExtractor={(item, index) => String(item.idCategoria)}
-        renderItem={({ item }) => <ListCategoria  categoria={item} />}
-        horizontal={true}
-        // onEndReached={getDadosCategoria}
-        // onEndReachedThreshold={0.1}
-        // ListFooterComponent={ <FooterList load={loading}/>}
-        />
+          <FlatList
+            data={categoria}
+            keyExtractor={(item, index) => String(item.idCategoria)}
+            renderItem={({item}) => <ListCategoria categoria={item} />}
+            horizontal={true}
+            // onEndReached={getDadosCategoria}
+            // onEndReachedThreshold={0.1}
+            // ListFooterComponent={ <FooterList load={loading}/>}
+          />
           {/* <ScrollView style={styles.scroll_categorias} horizontal={true}>
             {categoria.map((categoria, indice) => (
               <TouchableOpacity
@@ -116,16 +121,16 @@ const Home = ({navigation}) => {
             ))}
           </ScrollView> */}
           <Text style={styles.titulo_secao}>{'Recentes'}</Text>
-        
-          <FlatList 
-        data={produtos}
-        keyExtractor={(item, index) => String(item.idProduto)}
-        renderItem={({ item }) => <ListProduto  produtos={item} />}
-        horizontal={true}
-        // onEndReached={getDadosCategoria}
-        // onEndReachedThreshold={0.1}
-        // ListFooterComponent={ <FooterList load={loading}/>}
-        />
+
+          <FlatList
+            data={produtos}
+            keyExtractor={(item, index) => String(item.idProduto)}
+            renderItem={({item}) => <ListProduto produtos={item} />}
+            horizontal={true}
+            // onEndReached={getDadosCategoria}
+            // onEndReachedThreshold={0.1}
+            // ListFooterComponent={ <FooterList load={loading}/>}
+          />
           {/* <ScrollView horizontal={true}>
             {produtos.map((produto, indice) => (
               <TouchableOpacity key={indice}>
@@ -150,15 +155,15 @@ const Home = ({navigation}) => {
 };
 function FooterList({load}) {
   if (!load) return null;
-  return(
+  return (
     <View style={styles.loading}>
-      <ActivityIndicator size={25} color='pink' />
+      <ActivityIndicator size={25} color="pink" />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  loading:{
+  loading: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -177,7 +182,7 @@ const styles = StyleSheet.create({
     height: 100,
     backgroundColor: 'black',
     justifyContent: 'center',
-    marginRight:20
+    marginRight: 20,
   },
   titulo_secao: {
     marginLeft: 15,
@@ -237,15 +242,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 25,
     color: 'pink',
-    textAlign:'center'
+    textAlign: 'center',
   },
-  containerLoader:{
+  containerLoader: {
     position: 'relative',
     flex: 1,
-    alignContent:'center',
-    justifyContent:'center',
-    marginTop: '50%'
-  }
+    alignContent: 'center',
+    justifyContent: 'center',
+    marginTop: '50%',
+  },
 });
 
 export default Home;

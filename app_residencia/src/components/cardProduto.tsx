@@ -1,19 +1,12 @@
 import React from 'react';
 import {Card, Text} from 'react-native-elements';
 import {StyleSheet} from 'react-native';
+import { ProdutoType } from '../models/ProdutoType';
 
- type ProdutoType={
-  idProduto: number;
-  sku:string;
-  nomeProduto: string;
-  imagemProduto: string;
-  precoProduto: number;
-  descricaoProduto: string;
-  };
 
 const CardProduto = (props:ProdutoType) => {
   const dadosDoProduto = props.dados;
-  console.log(dadosDoProduto)
+  // console.log(dadosDoProduto)
   return (
     <Card containerStyle={styles.card_style}>
       <Card.Image

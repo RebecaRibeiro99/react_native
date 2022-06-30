@@ -3,15 +3,15 @@ import React, {createContext, useContext, useState} from 'react';
 export const PesquisaContext = createContext({});
 
 export const PesquisaProvider = ({children}) => {
-  const [pesquisaX, setPesquisaX] = useState<any>();
+  const [pesquisa, setPesquisa] = useState<any>();
 
   function Buscar(categoria: any) {
-    setPesquisaX(categoria);
+    setPesquisa(categoria);
   }
   return (
     <PesquisaContext.Provider
       value={{
-        pesquisaX,
+        pesquisa,
         Buscar,
       }}>
       {children}
