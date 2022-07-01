@@ -8,6 +8,7 @@ import Login from '../pages/Login';
 import Home from '../pages/Home';
 import Categories from '../pages/Categories';
 import ProdutoCategoria from '../pages/Categories/ProdutoCategoria';
+import Produto from '../pages/Produto';
 
 const TabNavigation = createBottomTabNavigator();
 
@@ -15,7 +16,7 @@ const BottomTabNavigator = () => {
   return (
     <TabNavigation.Navigator
       screenOptions={({route}) => ({
-        tabBarIcon: ({color,focused, size}) => {
+        tabBarIcon: ({color, focused, size}) => {
           let iconName;
 
           switch (route.name) {
@@ -36,7 +37,9 @@ const BottomTabNavigator = () => {
               break;
           }
 
-          return <Icon name={iconName ? iconName: ''} size={30} color={color} />;
+          return (
+            <Icon name={iconName ? iconName : ''} size={25} color={color} />
+          );
         },
         headerShown: false,
         // tabBarLabelStyle:{
@@ -127,6 +130,19 @@ const Routes = () => {
           component={ProdutoCategoria}
           options={{
             title: 'Produtos por categoria',
+            headerTitleAlign: 'center',
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: 'pink',
+            },
+            headerTintColor: 'black',
+          }}
+        />
+        <StackNavigation.Screen
+          name="ProdutoScreen"
+          component={Produto}
+          options={{
+            title: 'Detalhes do produto',
             headerTitleAlign: 'center',
             headerShown: true,
             headerStyle: {

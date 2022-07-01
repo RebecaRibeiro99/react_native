@@ -76,7 +76,7 @@ const Home = ({navigation}) => {
       });
   };
   function ListProduto({produtos}) {
-    return <CardProduto dados={produtos} />;
+    return <CardProduto navigation={navigation} dados={produtos} />;
   }
   setTimeout(() => {
     if (produtos && categoria) {

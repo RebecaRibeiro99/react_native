@@ -1,22 +1,37 @@
 import React from 'react';
 import {Card, Text} from 'react-native-elements';
 import {StyleSheet} from 'react-native';
-import { ProdutoType } from '../models/ProdutoType';
+import {ProdutoType} from '../models/ProdutoType';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-
-const CardProduto = (props:ProdutoType) => {
+const CardProduto = (props: any) => {
   const dadosDoProduto = props.dados;
+  const navigation = props.navigation;
   // console.log(dadosDoProduto)
   return (
-    <Card containerStyle={styles.card_style}>
-      <Card.Image
-        style={styles.imagens_cards}
-        source={{uri:dadosDoProduto.imagemProduto}}
-      />
-      <Card.Divider />
-      <Card.Title style={styles.titulo_cards}>{dadosDoProduto.nomeProduto}</Card.Title>
-      <Text style={styles.descricao_cards}>{dadosDoProduto.descricaoProduto}</Text>
-    </Card>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate({
+          name: 'ProdutoScreen',
+          params: {
+            dadosDoProduto: dadosDoProduto,
+          },
+        });
+      }}>
+      <Card containerStyle={styles.card_style}>
+        <Card.Image
+          style={styles.imagens_cards}
+          source={{uri: dadosDoProduto.imagemProduto}}
+        />
+        <Card.Divider />
+        <Card.Title style={styles.titulo_cards}>
+          {dadosDoProduto.nomeProduto}
+        </Card.Title>
+        <Text style={styles.descricao_cards}>
+          {dadosDoProduto.descricaoProduto}
+        </Text>
+      </Card>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
